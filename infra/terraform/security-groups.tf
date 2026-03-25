@@ -20,7 +20,7 @@ resource "aws_security_group" "medusa_alb_sg" {
   }
 }
 
-resource "aws_security_group" "mdeusa_ecs_task_sg" {
+resource "aws_security_group" "medusa_ecs_task_sg" {
   name        = "medusa_ecs_task_sg"
   description = "Security group for Medusa app container"
   vpc_id      = aws_vpc.medusa_vpc.id

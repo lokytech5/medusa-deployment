@@ -13,8 +13,10 @@ RUN npm install --legacy-peer-deps
 # Copy source code
 COPY . .
 
+RUN sed -i 's/\r$//' start-prod.sh && chmod +x start-prod.sh
+
 # Expose the port Medusa runs on
 EXPOSE 9000 5173
 
 # Start with migrations and then the development server
-ENTRYPOINT ["./start.sh"]
+ENTRYPOINT ["./start-prod.sh"]
