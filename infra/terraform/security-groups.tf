@@ -40,3 +40,21 @@ resource "aws_security_group" "medusa_ecs_task_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "medusa_db_sg" {
+  name        = "medusa_db_sg"
+  description = "security group for medusa postgresql db"
+  vpc_id      = aws_vpc.medusa_vpc.id
+
+  ingress {
+    description     = "Allow PostgreSQL from ECS tasks only"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.medusa_ecs_task_sg.id]
+  }
+
+  tags = {
+    Name = "medusa-db-sg"
+  }
+}

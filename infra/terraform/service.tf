@@ -1,10 +1,11 @@
 resource "aws_ecs_service" "medusa_app_service" {
-  name             = "medusa-app-service"
-  cluster          = aws_ecs_cluster.medusa_app_ecs_cluster.id
-  task_definition  = aws_ecs_task_definition.medusa_app_task_definition.arn
-  desired_count    = 1
-  launch_type      = "FARGATE"
-  platform_version = "LATEST"
+  name                              = "medusa-app-service"
+  cluster                           = aws_ecs_cluster.medusa_app_ecs_cluster.id
+  task_definition                   = aws_ecs_task_definition.medusa_app_task_definition.arn
+  desired_count                     = 1
+  launch_type                       = "FARGATE"
+  platform_version                  = "LATEST"
+  health_check_grace_period_seconds = 180
 
   network_configuration {
     subnets = [

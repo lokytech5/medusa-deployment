@@ -13,3 +13,11 @@ output "medusa_alb_dns_name" {
 output "medusa_ecs_service_name" {
   value = aws_ecs_service.medusa_app_service.name
 }
+
+output "medusa_postgres_endpoint" {
+  value = aws_db_instance.medusa_postgres_db.address
+}
+
+output "medusa_postgres_port" {
+  value = aws_db_instance.medusa_postgres_db.port
+}

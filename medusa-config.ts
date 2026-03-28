@@ -1,17 +1,28 @@
-import { loadEnv, defineConfig } from '@medusajs/framework/utils'
+import { loadEnv, defineConfig } from "@medusajs/framework/utils"
 
-loadEnv(process.env.NODE_ENV || 'development', process.cwd())
+loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+
+    // Session storage
+    redisUrl: process.env.REDIS_URL,
+
+    // Server/worker split
+    workerMode:
+      (process.env.MEDUSA_WORKER_MODE as "shared" | "worker" | "server") ||
+      "server",
+
     http: {
-      storeCors: process.env.STORE_CORS!,
-      adminCors: process.env.ADMIN_CORS!,
-      authCors: process.env.AUTH_CORS!,
+      storeCors: process.env.STORE_CORS || "",
+      adminCors: process.env.ADMIN_CORS || "",
+      authCors: process.env.AUTH_CORS || "",
       jwtSecret: process.env.JWT_SECRET || "supersecret",
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
+
+    // Matches your current RDS setup where SSL is disabled
     databaseDriverOptions: {
       ssl: false,
       sslmode: "disable",
@@ -19,26 +30,7 @@ module.exports = defineConfig({
   },
 
   admin: {
-    vite: (config) => {
-      return {
-        server: {
-          host: "0.0.0.0",
-          // Allow all hosts when running in Docker (development mode)
-          // In production, this should be more restrictive
-          allowedHosts: [
-            "localhost",
-            ".localhost",
-            "127.0.0.1",
-          ],
-          hmr: {
-            // HMR websocket port inside container
-            port: 5173,
-            // Port browser connects to (exposed in docker-compose.yml)
-            clientPort: 5173,
-          },
-        },
-      }
-    },
+    disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
+    backendUrl: process.env.MEDUSA_BACKEND_URL,
   },
-
 })

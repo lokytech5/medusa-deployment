@@ -20,9 +20,9 @@ resource "aws_lb_target_group" "medusa_app_target_group" {
   target_type = "ip"
 
   health_check {
-    path                = "/"
+    path                = "/health"
     protocol            = "HTTP"
-    matcher             = "200-499"
+    matcher             = "200"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2

@@ -14,7 +14,7 @@ resource "aws_ecs_task_definition" "medusa_app_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "medusa-app"
-      image     = "${aws_ecr_repository.medusa_app_repository.repository_url}:v2"
+      image     = "${aws_ecr_repository.medusa_app_repository.repository_url}:v3"
       essential = true
 
       portMappings = [
@@ -22,6 +22,62 @@ resource "aws_ecs_task_definition" "medusa_app_task_definition" {
           containerPort = 9000
           protocol      = "tcp"
         }
+      ]
+
+      environment = [
+        {
+          name  = "NODE_ENV"
+          value = "production"
+        },
+        {
+          name  = "HOST"
+          value = "0.0.0.0"
+        },
+        {
+          name  = "PORT"
+          value = "9000"
+        },
+        {
+          name  = "DATABASE_URL"
+          value = "postgres://medusa_user:admin123@${aws_db_instance.medusa_postgres_db.address}:5432/medusa_db"
+        },
+        {
+          name  = "JWT_SECRET"
+          value = "supersecretjwt"
+        },
+        {
+          name  = "COOKIE_SECRET"
+          value = "supersecretcookie"
+        },
+        {
+          name  = "STORE_CORS"
+          value = ""
+        },
+        {
+          name  = "ADMIN_CORS"
+          value = "http://${aws_lb.medusa_alb.dns_name}"
+        },
+        {
+          name  = "AUTH_CORS"
+          value = "http://${aws_lb.medusa_alb.dns_name}"
+        },
+        {
+          name  = "MEDUSA_BACKEND_URL"
+          value = "http://${aws_lb.medusa_alb.dns_name}"
+        },
+        {
+          name  = "DISABLE_MEDUSA_ADMIN"
+          value = "false"
+        },
+        {
+          name  = "MEDUSA_WORKER_MODE"
+          value = "server"
+        }
+        # add later when ElastiCache is ready:
+        # {
+        #   name  = "REDIS_URL"
+        #   value = "redis://..."
+        # }
       ]
 
       logConfiguration = {
