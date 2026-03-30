@@ -5,6 +5,7 @@ resource "aws_ecs_task_definition" "medusa_app_task_definition" {
   cpu                      = "512"
   memory                   = "1024"
   execution_role_arn       = aws_iam_role.medusa_ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.medusa_ecs_task_role.arn
 
   runtime_platform {
     operating_system_family = "LINUX"
@@ -22,8 +23,24 @@ resource "aws_ecs_task_definition" "medusa_app_task_definition" {
           containerPort = 9000
           protocol      = "tcp"
         }
+
       ]
 
+      secrets = [
+        {
+          name      = "DATABASE_URL"
+          valueFrom = "${aws_secretsmanager_secret.medusa_secrets.arn}:DATABASE_URL::"
+        },
+        {
+          name      = "JWT_SECRET"
+          valueFrom = "${aws_secretsmanager_secret.medusa_secrets.arn}:JWT_SECRET::"
+        },
+        {
+          name      = "COOKIE_SECRET"
+          valueFrom = "${aws_secretsmanager_secret.medusa_secrets.arn}:COOKIE_SECRET::"
+        }
+
+      ]
       environment = [
         {
           name  = "NODE_ENV"
@@ -36,18 +53,6 @@ resource "aws_ecs_task_definition" "medusa_app_task_definition" {
         {
           name  = "PORT"
           value = "9000"
-        },
-        {
-          name  = "DATABASE_URL"
-          value = "postgres://medusa_user:admin123@${aws_db_instance.medusa_postgres_db.address}:5432/medusa_db"
-        },
-        {
-          name  = "JWT_SECRET"
-          value = "supersecretjwt"
-        },
-        {
-          name  = "COOKIE_SECRET"
-          value = "supersecretcookie"
         },
         {
           name  = "STORE_CORS"

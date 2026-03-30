@@ -4,6 +4,7 @@ resource "aws_ecs_service" "medusa_app_service" {
   task_definition                   = aws_ecs_task_definition.medusa_app_task_definition.arn
   desired_count                     = 1
   launch_type                       = "FARGATE"
+  enable_execute_command            = true
   platform_version                  = "LATEST"
   health_check_grace_period_seconds = 180
 
