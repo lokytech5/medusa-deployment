@@ -21,3 +21,7 @@ output "medusa_postgres_endpoint" {
 output "medusa_postgres_port" {
   value = aws_db_instance.medusa_postgres_db.port
 }
+
+output "medusa_redis_primary_endpoint" {
+  value = aws_elasticache_replication_group.medusa_redis.primary_endpoint_address
+}

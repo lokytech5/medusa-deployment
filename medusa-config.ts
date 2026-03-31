@@ -5,15 +5,10 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd())
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-
-    // Session storage
     redisUrl: process.env.REDIS_URL,
-
-    // Server/worker split
     workerMode:
       (process.env.MEDUSA_WORKER_MODE as "shared" | "worker" | "server") ||
       "server",
-
     http: {
       storeCors: process.env.STORE_CORS || "",
       adminCors: process.env.ADMIN_CORS || "",
@@ -21,13 +16,58 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET || "supersecret",
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
-
-    // Matches your current RDS setup where SSL is disabled
     databaseDriverOptions: {
       ssl: false,
       sslmode: "disable",
     },
   },
+
+  modules: [
+    {
+      resolve: "@medusajs/medusa/caching",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/caching-redis",
+            id: "caching-redis",
+            is_default: true,
+            options: {
+              redisUrl: process.env.CACHE_REDIS_URL || process.env.REDIS_URL,
+            },
+          },
+        ],
+      },
+    },
+    {
+      resolve: "@medusajs/medusa/event-bus-redis",
+      options: {
+        redisUrl: process.env.EVENTS_REDIS_URL || process.env.REDIS_URL,
+      },
+    },
+    {
+      resolve: "@medusajs/medusa/workflow-engine-redis",
+      options: {
+        redis: {
+          redisUrl: process.env.REDIS_URL,
+        },
+      },
+    },
+    {
+      resolve: "@medusajs/medusa/locking",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/locking-redis",
+            id: "locking-redis",
+            is_default: true,
+            options: {
+              redisUrl: process.env.LOCKING_REDIS_URL || process.env.REDIS_URL,
+            },
+          },
+        ],
+      },
+    },
+  ],
 
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",

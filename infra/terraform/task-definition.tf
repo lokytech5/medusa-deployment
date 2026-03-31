@@ -77,12 +77,11 @@ resource "aws_ecs_task_definition" "medusa_app_task_definition" {
         {
           name  = "MEDUSA_WORKER_MODE"
           value = "server"
+        },
+        {
+          name  = "REDIS_URL"
+          value = "redis://${aws_elasticache_replication_group.medusa_redis.primary_endpoint_address}:6379"
         }
-        # add later when ElastiCache is ready:
-        # {
-        #   name  = "REDIS_URL"
-        #   value = "redis://..."
-        # }
       ]
 
       logConfiguration = {
