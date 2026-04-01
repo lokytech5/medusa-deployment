@@ -12,6 +12,14 @@ resource "aws_security_group" "medusa_alb_sg" {
 
   }
 
+  ingress {
+    description = "Allows HTTPS traffic from anywhere"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
