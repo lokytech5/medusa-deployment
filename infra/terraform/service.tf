@@ -10,8 +10,8 @@ resource "aws_ecs_service" "medusa_app_service" {
 
   network_configuration {
     subnets = [
-      aws_subnet.medusa_private_subnet_a.id,
-      aws_subnet.medusa_private_subnet_b.id
+      module.networking.private_subnet_a_id,
+      module.networking.private_subnet_b_id
     ]
 
     security_groups  = [aws_security_group.medusa_ecs_task_sg.id]

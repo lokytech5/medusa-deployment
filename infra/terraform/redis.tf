@@ -2,8 +2,8 @@ resource "aws_elasticache_subnet_group" "medusa_elastic_cache_subnet_group" {
   name        = "medusa-elastic-cache-subnet-group"
   description = "Subnet group for Medusa ElasticCache Redis cluster"
   subnet_ids = [
-    aws_subnet.medusa_private_subnet_a.id,
-    aws_subnet.medusa_private_subnet_b.id
+    module.networking.private_subnet_a_id,
+    module.networking.private_subnet_b_id
   ]
 }
 

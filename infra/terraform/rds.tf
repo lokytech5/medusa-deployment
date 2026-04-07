@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "medusa_app_db_subnet" {
   name       = "medusa-app-db-subnet"
-  subnet_ids = [aws_subnet.medusa_private_subnet_a.id, aws_subnet.medusa_private_subnet_b.id]
+  subnet_ids = [module.networking.private_subnet_a_id, module.networking.private_subnet_b_id]
 
   tags = {
     Name = "medusa db subnet"

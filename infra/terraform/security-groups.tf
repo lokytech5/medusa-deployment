@@ -1,7 +1,7 @@
 resource "aws_security_group" "medusa_alb_sg" {
   name        = "medusa_alb_sg"
   description = "Security group for Medusa ALB"
-  vpc_id      = aws_vpc.medusa_vpc.id
+  vpc_id      = module.networking.vpc_id
 
   ingress {
     description = "Allow HTTP traffic from anywhere"
@@ -31,7 +31,7 @@ resource "aws_security_group" "medusa_alb_sg" {
 resource "aws_security_group" "medusa_ecs_task_sg" {
   name        = "medusa_ecs_task_sg"
   description = "Security group for Medusa app container"
-  vpc_id      = aws_vpc.medusa_vpc.id
+  vpc_id      = module.networking.vpc_id
 
   ingress {
     description     = "Allow inbound traffic from medusa Application"
@@ -52,7 +52,7 @@ resource "aws_security_group" "medusa_ecs_task_sg" {
 resource "aws_security_group" "medusa_db_sg" {
   name        = "medusa_db_sg"
   description = "security group for medusa postgresql db"
-  vpc_id      = aws_vpc.medusa_vpc.id
+  vpc_id      = module.networking.vpc_id
 
   ingress {
     description     = "Allow PostgreSQL from ECS tasks only"
@@ -71,7 +71,7 @@ resource "aws_security_group" "medusa_db_sg" {
 resource "aws_security_group" "medusa_elastic_cache_redis_sg" {
   name        = "medusa_elastic_cache_redis_sg"
   description = "Elastic cache security group for Redis"
-  vpc_id      = aws_vpc.medusa_vpc.id
+  vpc_id      = module.networking.vpc_id
 
   ingress {
     description     = "Allow Redis access from ECS tasks only"

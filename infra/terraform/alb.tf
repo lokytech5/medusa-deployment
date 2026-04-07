@@ -3,7 +3,7 @@ resource "aws_lb" "medusa_alb" {
   internal                   = false
   load_balancer_type         = "application"
   security_groups            = [aws_security_group.medusa_alb_sg.id]
-  subnets                    = [aws_subnet.medusa_public_subnet_a.id, aws_subnet.medusa_public_subnet_b.id]
+  subnets                    = values(module.networking.public_subnet_ids)
   enable_deletion_protection = false
 
   tags = {
@@ -16,7 +16,7 @@ resource "aws_lb_target_group" "medusa_app_target_group" {
   name        = "medusa-app-target-group"
   port        = 9000
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.medusa_vpc.id
+  vpc_id      = module.networking.vpc_id
   target_type = "ip"
 
   health_check {
