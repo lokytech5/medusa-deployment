@@ -1,76 +1,197 @@
-<p align="center">
-  <a href="https://www.medusajs.com">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/59018053/229103275-b5e482bb-4601-46e6-8142-244f531cebdb.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    <img alt="Medusa logo" src="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    </picture>
-  </a>
-</p>
-<h1 align="center">
-  Medusa
-</h1>
+# Medusa on AWS with Terraform
 
-<h4 align="center">
-  <a href="https://docs.medusajs.com">Documentation</a> |
-  <a href="https://www.medusajs.com">Website</a>
-</h4>
+Production-style Medusa deployment on AWS using Terraform, ECS Fargate, RDS PostgreSQL, Redis, ALB, ACM, and Route 53.
 
-<p align="center">
-  Building blocks for digital commerce
-</p>
-<p align="center">
-  <a href="https://github.com/medusajs/medusa/blob/master/CONTRIBUTING.md">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs welcome!" />
-  </a>
-    <a href="https://www.producthunt.com/posts/medusa"><img src="https://img.shields.io/badge/Product%20Hunt-%231%20Product%20of%20the%20Day-%23DA552E" alt="Product Hunt"></a>
-  <a href="https://discord.gg/xpCwq3Kfn8">
-    <img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Discord Chat" />
-  </a>
-  <a href="https://twitter.com/intent/follow?screen_name=medusajs">
-    <img src="https://img.shields.io/twitter/follow/medusajs.svg?label=Follow%20@medusajs" alt="Follow @medusajs" />
-  </a>
-</p>
+This project documents my journey of taking a Medusa starter application and deploying it into a structured AWS environment with reusable Terraform, private/public networking, HTTPS, and operational building blocks.
 
-## Compatibility
+---
 
-This starter is compatible with versions >= 2 of `@medusajs/medusa`. 
+## Project Objective
 
-## Getting Started
+The goal of this project is to build a repeatable cloud infrastructure foundation for a containerized Medusa application and progressively move it toward a more production-shaped deployment.
 
-Visit the [Quickstart Guide](https://docs.medusajs.com/learn/installation) to set up a server.
+This project focuses on:
 
-Visit the [Docs](https://docs.medusajs.com/learn/installation#get-started) to learn more about our system requirements.
+- AWS infrastructure design
+- Terraform infrastructure as code
+- ECS Fargate deployment
+- PostgreSQL and Redis integration
+- HTTPS with ACM and ALB
+- Route 53 DNS routing
+- reusable Terraform modules
+- deployment workflow and operational readiness
 
-## What is Medusa
+---
 
-Medusa is a set of commerce modules and tools that allow you to build rich, reliable, and performant commerce applications without reinventing core commerce logic. The modules can be customized and used to build advanced ecommerce stores, marketplaces, or any product that needs foundational commerce primitives. All modules are open-source and freely available on npm.
+## Current Architecture
 
-Learn more about [Medusa’s architecture](https://docs.medusajs.com/learn/introduction/architecture) and [commerce modules](https://docs.medusajs.com/learn/fundamentals/modules/commerce-modules) in the Docs.
+The application is deployed on AWS with the following core components:
 
-## Build with AI Agents
+- **VPC**
+- **Public and private subnets across 2 AZs**
+- **Internet Gateway**
+- **NAT Gateway**
+- **Route tables and associations**
+- **Security groups**
+- **ECR** for container images
+- **ECS Fargate** for application runtime
+- **Application Load Balancer**
+- **RDS PostgreSQL**
+- **ElastiCache Redis**
+- **CloudWatch logs**
+- **ACM certificate**
+- **Route 53 hosted zone and DNS record**
 
-### Claude Code Plugin
+Traffic flow is structured as follows:
 
-If you use AI agents like Claude Code, check out the [medusa-dev Claude Code plugin](https://github.com/medusajs/medusa-claude-plugins).
+1. User accesses the Medusa app through the public domain
+2. Route 53 resolves the domain to the ALB
+3. ACM provides TLS certificate for HTTPS
+4. ALB forwards traffic to ECS tasks
+5. ECS tasks run Medusa in private subnets
+6. Medusa connects privately to RDS PostgreSQL and Redis
 
-### Other Agents
+---
 
-If you use AI agents other than Claude Code, copy the [skills directory](https://github.com/medusajs/medusa-claude-plugins/tree/main/plugins/medusa-dev/skills) into your agent's relevant `skills` directory.
+## What Has Been Completed
 
-### MCP Server
+### Module 2 — AWS Infrastructure Foundation
+Built the AWS networking and runtime foundation:
 
-You can also add the MCP server `https://docs.medusajs.com/mcp` to your AI agents to answer questions related to Medusa. The `medusa-dev` Claude Code plugin includes this MCP server by default.
+- VPC
+- public/private subnets
+- internet gateway
+- NAT gateway
+- route tables
+- security groups
+- ECR
+- ECS cluster
+- CloudWatch log group
+- IAM roles
+- ALB
+- ECS task definition
+- ECS service
 
-## Community & Contributions
+### Module 3 — Application Dependency Completion
+Completed the missing dependency and runtime alignment:
 
-The community and core team are available in [GitHub Discussions](https://github.com/medusajs/medusa/discussions), where you can ask for support, discuss roadmap, and share ideas.
+- RDS PostgreSQL
+- ECS-to-database connectivity
+- Medusa production build/runtime correction
+- startup script correction
+- `/health` health check alignment
+- successful Admin access behind ALB
 
-Join our [Discord server](https://discord.com/invite/medusajs) to meet other community members.
+### Module 4 — Production Runtime Hardening
+Added important production-style pieces:
 
-## Other channels
+- Redis with ElastiCache
+- HTTPS listener with ACM
+- Route 53 DNS
+- working secure domain access
+- verified Medusa Admin login over HTTPS
 
-- [GitHub Issues](https://github.com/medusajs/medusa/issues)
-- [Twitter](https://twitter.com/medusajs)
-- [LinkedIn](https://www.linkedin.com/company/medusajs)
-- [Medusa Blog](https://medusajs.com/blog/)
+### Terraform Refactoring Progress
+Started refactoring the infrastructure into reusable Terraform modules.
+
+Completed so far:
+
+- networking moved into a reusable Terraform module
+- clearer separation between root configuration and module logic
+- improved understanding of how to scale Terraform structure for future projects
+
+---
+
+## Tech Stack
+
+### Application
+- Medusa v2
+- Node.js
+- PostgreSQL
+- Redis
+
+### AWS
+- VPC
+- ECS Fargate
+- ECR
+- RDS PostgreSQL
+- ElastiCache Redis
+- Application Load Balancer
+- ACM
+- Route 53
+- CloudWatch
+- IAM
+
+### Infrastructure as Code
+- Terraform
+
+---
+
+## Repository Purpose
+
+This repository is not just an application repository.
+
+It is also a hands-on infrastructure learning project that demonstrates:
+
+- how AWS services connect together in practice
+- how containerized applications are deployed on AWS
+- how Terraform can evolve from single files to reusable modules
+- how to think about repeatability, deployment workflow, observability, and production readiness
+
+---
+
+## Deployment Status
+
+At this stage, the Medusa application has been successfully deployed and tested behind:
+
+- **ALB**
+- **HTTPS**
+- **custom domain**
+- **RDS PostgreSQL**
+- **Redis**
+
+The Admin application loads successfully, authentication works, and the runtime path has been validated through CloudWatch logs and browser testing.
+
+---
+
+## Domain
+
+Application domain:
+
+- `https://plugfolio.cloud`
+- Medusa Admin available at `/app`
+
+---
+
+## Project Structure
+
+Example high-level structure:
+
+```bash
+.
+├── .github/
+│   └── workflows/
+├── modules/
+│   └── networking/
+├── *.tf
+├── Dockerfile
+├── medusa-config.ts
+├── package.json
+└── README.md
+```
+
+### Infrastructure Notes
+
+A key part of this project is learning how infrastructure pieces relate to each other.
+
+Important design choices include:
+
+- ALB stays public
+- ECS tasks stay private
+- database stays private
+- Redis stays private
+- Redis stays private
+- NAT is used for outbound access from private workloads
+- ALB handles external traffic routing
+- ACM handles TLS certificates
+- Route 53 handles DNS
