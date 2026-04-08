@@ -2,8 +2,7 @@ name: Test CLI
 on:
  pull_request:
   branches:
-    - 'master'
-    - 'ci'
+    - 'main'
 
 jobs:
   test-cli-yarn:
