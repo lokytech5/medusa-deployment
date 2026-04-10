@@ -32,6 +32,11 @@ resource "aws_ecs_service" "medusa_app_service" {
     ignore_changes = [task_definition]
   }
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+
   tags = {
     Name = "medusa-app-service"
   }
