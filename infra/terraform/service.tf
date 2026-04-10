@@ -28,6 +28,10 @@ resource "aws_ecs_service" "medusa_app_service" {
     aws_lb_listener.medusa_alb_listener
   ]
 
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+
   tags = {
     Name = "medusa-app-service"
   }
