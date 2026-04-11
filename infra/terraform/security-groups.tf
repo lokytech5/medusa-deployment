@@ -1,33 +1,65 @@
-resource "aws_security_group" "medusa_alb_sg" {
-  name        = "medusa_alb_sg"
-  description = "Security group for Medusa ALB"
-  vpc_id      = module.networking.vpc_id
-
-  ingress {
-    description = "Allow HTTP traffic from anywhere"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-
+module "security" {
+  source                    = "./modules/security"
+  vpc_id                    = module.networking.vpc_id
+  medusa_alb_sg_name        = "medusa_alb_sg"
+  medusa_alb_sg_description = "Security group for Medusa ALB"
+  medusa_alb_sg_ingress = {
+    http = {
+      description = "Allow HTTP traffic from anywhere"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+    https = {
+      description = "Allow HTTPS traffic from anywhere"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   }
 
-  ingress {
-    description = "Allows HTTPS traffic from anywhere"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
+  medusa_alb_sg_egress = {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
 }
 
+# resource "aws_security_group" "medusa_alb_sg" {
+#   name        = "medusa_alb_sg"
+#   description = "Security group for Medusa ALB"
+#   vpc_id      = module.networking.vpc_id
+
+#   ingress {
+#     description = "Allow HTTP traffic from anywhere"
+#     from_port   = 80
+#     to_port     = 80
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+
+#   }
+
+#   ingress {
+#     description = "Allows HTTPS traffic from anywhere"
+#     from_port   = 443
+#     to_port     = 443
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
+
+//security group for ECS tasks
 resource "aws_security_group" "medusa_ecs_task_sg" {
   name        = "medusa_ecs_task_sg"
   description = "Security group for Medusa app container"
@@ -38,7 +70,7 @@ resource "aws_security_group" "medusa_ecs_task_sg" {
     from_port       = 9000
     to_port         = 9000
     protocol        = "tcp"
-    security_groups = [aws_security_group.medusa_alb_sg.id]
+    security_groups = [module.security.medusa_alb_sg_id]
   }
 
   egress {
@@ -49,6 +81,7 @@ resource "aws_security_group" "medusa_ecs_task_sg" {
   }
 }
 
+//security group for PostgreSQL database
 resource "aws_security_group" "medusa_db_sg" {
   name        = "medusa_db_sg"
   description = "security group for medusa postgresql db"

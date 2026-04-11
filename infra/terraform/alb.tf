@@ -2,7 +2,7 @@ resource "aws_lb" "medusa_alb" {
   name                       = "medusa-alb"
   internal                   = false
   load_balancer_type         = "application"
-  security_groups            = [aws_security_group.medusa_alb_sg.id]
+  security_groups            = [module.security.medusa_alb_sg_id]
   subnets                    = values(module.networking.public_subnet_ids)
   enable_deletion_protection = false
 
