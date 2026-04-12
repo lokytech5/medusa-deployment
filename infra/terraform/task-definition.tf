@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "medusa_app_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "medusa-app"
-      image     = "${data.aws_ecr_repository.medusa_app_repository.repository_url}:7e759afef11b27acf181fa3ac6dee863f8e17569"
+      image     = "${data.aws_ecr_repository.medusa_app_repository.repository_url}:"
       essential = true
 
       portMappings = [
