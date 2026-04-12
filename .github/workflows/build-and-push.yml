@@ -1,4 +1,4 @@
-name: Build, Tag, and Push Docker Image to Amazon EC
+name: Build, Tag, and Push Docker Image to Amazon ECR
 
 on:
   push:
